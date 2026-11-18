@@ -1,0 +1,27 @@
+{
+  "name": "claude-gif-kit",
+  "version": "1.0.0",
+  "description": "The setup behind a scroll stopping animated explainer GIF and video made with Claude Code and Remotion",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "setup": "sh scripts/make_placeholder_clips.sh",
+    "studio": "remotion studio src/index.ts",
+    "still": "remotion still src/index.ts Pipeline out/main.png --frame=690",
+    "render": "remotion render src/index.ts Pipeline out/pipeline.mp4 --codec=h264 --crf=17 --pixel-format=yuv420p --muted --concurrency=2",
+    "gif": "python3 scripts/make_gif.py out/pipeline.mp4 out/pipeline.gif --fps 50 --width 540 --hold-still out/main.png",
+    "check": "python3 scripts/check_kit.py && python3 -m unittest discover -s tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.515",
+    "@remotion/google-fonts": "4.0.515",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.515"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "typescript": "5.9.3"
+  }
+}
