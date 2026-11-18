@@ -20,7 +20,7 @@ can repeat it for your own idea.
 6. **Review with pictures, not with hope.** Render stills at the key frames, look at them at full size, then give notes
    with exact words ("make the container narrower than the logo tile", not "make it better"). Keep the notes short, one
    topic each. About eight rounds changed: layout, sizes, one logo slot that swaps, a three track timeline, platform
-   logos, a comment strip, an end screen, an underline loop.
+   logos, a comment strip, an end screen, a single slow underline pass.
 7. **Export the video first, the GIF second.** A video at 60 fps is the smooth one. The GIF recipe is in
    `docs/04-GIF-RECIPE.md` and it matters: frame timing in a GIF is whole hundredths of a second.
 8. **Ask for the comment inside the picture,** not in the post text. (`docs/07-THE-COMMENT-ASK.md`.)

@@ -10,7 +10,7 @@ import { loadFont as loadSans } from "@remotion/google-fonts/Poppins";
 
 export const PL_FPS = 60;
 export const PL_FRAMES = 1110;
-export const PL_MAIN_FRAME = 690;
+export const PL_MAIN_FRAME = 746;
 const W = 1080;
 const H = 1350;
 
@@ -60,7 +60,6 @@ const EDIT_X = 88;
 const OUT_Y = 1004;
 const OUT_W = 80;
 const OUT_H = 142;
-// Finished clips shown under the timeline (clip names from public/clips)
 const OUT_CLIPS = ["a2", "b2", "c3", "a3"];
 const PLATFORMS: Array<{ name: string; file?: string; full?: boolean; label?: string }> = [
   { name: "Instagram", file: "instagram.svg" },
@@ -167,46 +166,37 @@ const ToolTile: React.FC<{ tool: Tool; x: number; p: number }> = ({ tool, x, p }
   );
 };
 
-/* ---------- underline loop: words get underlined one by one, left to right, then wipe out and start again ---------- */
-const UL_CYCLE = 300;
+/* ---------- underline, one pass: every word is underlined once, left to right, at a slow pace ---------- */
+const UL_RAW_COLOR = "#2B6BFF";
 const ulEase = Easing.bezier(0.45, 0, 0.55, 1);
-const pm = (x: number) => ((x % UL_CYCLE) + UL_CYCLE) % UL_CYCLE;
-const STRIP_UL: Array<[number, number]> = [[0, 36], [40, 44], [92, 22], [118, 24], [144, 42], [190, 30], [224, 26]];
-const END_UL: Array<[number, number]> = [[0, 40], [44, 56], [110, 22], [134, 20], [156, 20], [178, 24], [206, 36], [244, 22], [268, 20]];
-const ulState = (local: number, st: [number, number]) => {
-  const p = interpolate(local, [st[0], st[0] + st[1]], [0, 1], { ...clamp, easing: ulEase });
-  const r = interpolate(local, [282, 300], [0, 1], { ...clamp, easing: ulEase });
-  return { p, r };
-};
-const Underline: React.FC<{ local: number; st: [number, number]; height: number; color: string; bottom: number; radius?: number }> = ({ local, st, height, color, bottom, radius = 3 }) => {
-  const { p, r } = ulState(local, st);
-  return (
-    <span
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom,
-        height,
-        borderRadius: radius,
-        background: color,
-        transformOrigin: r > 0 ? "100% 50%" : "0% 50%",
-        transform: `scaleX(${r > 0 ? 1 - r : p})`,
-      }}
-    />
-  );
-};
-const CurvedUnderline: React.FC<{ local: number; st: [number, number]; color: string; stroke: number; w: number; h: number; style: React.CSSProperties }> = ({ local, st, color, stroke, w, h, style }) => {
-  const { p, r } = ulState(local, st);
-  const off = r > 0 ? -r : 1 - p;
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: "absolute", overflow: "visible", ...style }}>
-      <path d={`M${0.03 * w},${0.12 * h} Q ${0.5 * w},${1.35 * h} ${0.97 * w},${0.12 * h}`} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" pathLength={1} strokeDasharray="1 1" strokeDashoffset={off} />
-    </svg>
-  );
-};
+// [start frame, duration]. The strip finishes on the last letter of KIT at frame 740, then the screen changes.
+const STRIP_UL: Array<[number, number]> = [[10, 120], [140, 110], [260, 80], [350, 80], [440, 120], [570, 80], [660, 80]];
+// Relative to the start of the end screen: COMMENT, RAW, then the eight words of the sentence.
+const END_UL: Array<[number, number]> = [[30, 50], [86, 70], [164, 16], [183, 16], [202, 16], [221, 16], [240, 16], [259, 16], [278, 16], [297, 16]];
+const ulP = (local: number, st: [number, number]) => interpolate(local, [st[0], st[0] + st[1]], [0, 1], { ...clamp, easing: ulEase });
+const Underline: React.FC<{ local: number; st: [number, number]; height: number; color: string; bottom: number; radius?: number }> = ({ local, st, height, color, bottom, radius = 3 }) => (
+  <span
+    style={{
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom,
+      height,
+      borderRadius: radius,
+      background: color,
+      transformOrigin: "0% 50%",
+      transform: `scaleX(${ulP(local, st)})`,
+    }}
+  />
+);
+// An arc that bows upward, drawn left to right.
+const CurvedUnderline: React.FC<{ local: number; st: [number, number]; color: string; stroke: number; w: number; h: number; style: React.CSSProperties }> = ({ local, st, color, stroke, w, h, style }) => (
+  <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: "absolute", overflow: "visible", ...style }}>
+    <path d={`M${0.03 * w},${0.9 * h} Q ${0.5 * w},${-0.1 * h} ${0.97 * w},${0.9 * h}`} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" pathLength={1} strokeDasharray="1 1" strokeDashoffset={1 - ulP(local, st)} />
+  </svg>
+);
 
-export const PlScene: React.FC<{ f: number }> = ({ f }) => {
+export const PlScene: React.FC<{ f: number; slotF?: number }> = ({ f, slotF }) => {
   /* headline: fully visible on frame 0, small punch */
   const punch = 1 + 0.045 * (1 - t01(f, 0, 16, Easing.out(Easing.cubic)));
 
@@ -219,7 +209,7 @@ export const PlScene: React.FC<{ f: number }> = ({ f }) => {
   const SLOT_PERIOD = 96;
   const SLOT_MOVE = 30;
   const SLOT_TRAVEL = 112;
-  const slotT = Math.max(0, f - S(1.4));
+  const slotT = Math.max(0, (slotF ?? f) - S(1.4));
   const slotStep = Math.floor(slotT / SLOT_PERIOD);
   const slotPhase = slotT - slotStep * SLOT_PERIOD;
   const slotD = slotPhase <= SLOT_PERIOD - SLOT_MOVE ? 0 : inOut((slotPhase - (SLOT_PERIOD - SLOT_MOVE)) / SLOT_MOVE);
@@ -256,7 +246,7 @@ export const PlScene: React.FC<{ f: number }> = ({ f }) => {
   const outLabelP = (i: number) => t01(f, S(8.8) + i * 14 + 44, S(8.8) + i * 14 + 66);
 
   /* comment ask: a strip on the main screen, a full end screen after it */
-  const EXIT_A = S(12.4);
+  const EXIT_A = 748;
   const exitP = t01(f, EXIT_A, EXIT_A + 32, inOut);
   const cardIn = (a: number, b: number) => t01(f, EXIT_A + a, EXIT_A + b);
   const stripP = t01(f, 0, 14, Easing.out(Easing.cubic));
@@ -267,14 +257,14 @@ export const PlScene: React.FC<{ f: number }> = ({ f }) => {
   const c3 = cardIn(50, 80);
   const c4 = cardIn(62, 90);
   const rawPulse = 1 + 0.012 * Math.sin(Math.max(0, f - EXIT_A) / 14);
-  const stripLocal = pm(f - 125);
-  const endLocal = pm(f - (EXIT_A + 36));
+  const stripLocal = f;
+  const endLocal = f - EXIT_A;
 
   const trackBox = (top: number, h: number) => ({ position: "absolute" as const, left: EDIT_X, top, width: EDIT_W, height: h, borderRadius: 8, background: K.panel, boxShadow: "0 0 0 1.5px #25252C", opacity: edLabelP });
 
   return (
     <AbsoluteFill style={{ background: K.bg, color: K.ink, fontFamily: sans, fontWeight: 600 }}>
-      <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, transformOrigin: "50% 0", transform: `translateY(${72 - exitP * 110}px) scale(0.935)`, opacity: 1 - exitP, filter: `blur(${exitP * 10}px)` }}>
+      <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, transformOrigin: "50% 0", transform: `translateY(${75 - exitP * 110}px) scale(0.935)`, opacity: 1 - exitP, filter: `blur(${exitP * 10}px)` }}>
       {/* headline */}
       <div style={{ position: "absolute", left: 0, right: 0, top: 40, textAlign: "center", transform: `scale(${punch})`, transformOrigin: "50% 40%" }}>
         <div style={{ fontWeight: 800, fontSize: 80, lineHeight: 1, letterSpacing: -1.8, color: K.ink }}>FOOTAGE IN.</div>
@@ -473,7 +463,7 @@ export const PlScene: React.FC<{ f: number }> = ({ f }) => {
           w === "RAW" ? (
             <span key={w} style={{ position: "relative", display: "inline-block", background: K.yellow, padding: "0 16px 13px", borderRadius: 14, lineHeight: "38px" }}>
               RAW
-              <CurvedUnderline local={stripLocal} st={STRIP_UL[i]} color="#0A0A0A" stroke={3.5} w={76} h={9} style={{ left: 15, bottom: 5 }} />
+              <CurvedUnderline local={stripLocal} st={STRIP_UL[i]} color={UL_RAW_COLOR} stroke={6} w={76} h={12} style={{ left: 15, bottom: 3 }} />
             </span>
           ) : (
             <span key={`${w}${i}`} style={{ position: "relative", display: "inline-block", lineHeight: "42px" }}>
@@ -509,13 +499,13 @@ export const PlScene: React.FC<{ f: number }> = ({ f }) => {
           >
             RAW
           </div>
-          <CurvedUnderline local={endLocal} st={END_UL[1]} color="#FFFFFF" stroke={9} w={520} h={26} style={{ left: 45, bottom: -36, opacity: c1 }} />
+          <CurvedUnderline local={endLocal} st={END_UL[1]} color={UL_RAW_COLOR} stroke={15} w={520} h={26} style={{ left: 45, bottom: -42, opacity: c1 }} />
         </div>
         <div style={{ marginTop: 60, fontWeight: 700, fontSize: 44, opacity: c2, filter: blurIn(c2, 8), transform: `translateY(${(1 - c2) * 20}px)`, display: "flex", gap: 13 }}>
           {END_WORDS.map((w, i) => (
             <span key={`${w}${i}`} style={{ position: "relative", display: "inline-block", lineHeight: "52px" }}>
               {w}
-              <Underline local={endLocal} st={END_UL[i + 2 > 8 ? 8 : i + 2]} height={4} color={K.yellow} bottom={1} />
+              <Underline local={endLocal} st={END_UL[i + 2]} height={4} color={K.yellow} bottom={1} />
             </span>
           ))}
         </div>
@@ -533,4 +523,4 @@ export const Pipeline: React.FC = () => {
   return <PlScene f={f} />;
 };
 export const PipelineEnd: React.FC = () => <PlScene f={PL_FRAMES - 1} />;
-export const PipelineMain: React.FC = () => <PlScene f={PL_MAIN_FRAME} />;
+export const PipelineMain: React.FC = () => <PlScene f={PL_MAIN_FRAME} slotF={700} />;

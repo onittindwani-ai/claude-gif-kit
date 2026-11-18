@@ -1,6 +1,6 @@
 {
   "name": "claude-gif-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The setup behind a scroll stopping animated explainer GIF and video made with Claude Code and Remotion",
   "license": "MIT",
   "private": true,

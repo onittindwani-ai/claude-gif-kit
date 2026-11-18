@@ -5,7 +5,7 @@ Goal: people comment one short word and you send them the resource.
 ## What the GIF does
 
 1. **A strip at the very top, from the first frame:** `COMMENT [RAW] FOR THE <NAME OF THE RESOURCE> ↓`. White bar, black text, the keyword on a yellow chip, a bobbing arrow towards the comment box (on LinkedIn the comment box sits below the media).
-2. **An underline loop:** each word is underlined from left to right, one after another, the keyword with a curved underline. The ask is always being drawn.
+2. **An underline pass:** each word is underlined once, from left to right, one after another, at a slow pace; the last underline finishes right as the screen changes. The keyword gets a bold curved arc in a contrasting colour. The ask is being drawn from the first frame to the screen change.
 3. **An end screen** (the main content slides up and blurs out): COMMENT, the keyword on a big bar, a sentence that names the resource, a bonus line, an arrow.
 
 ## Rules

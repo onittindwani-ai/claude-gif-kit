@@ -15,7 +15,7 @@ Mechanisms only. Copy the ideas, never another creator's words, footage or marks
 - A huge two line headline visible from frame 0: white line, then a solid accent bar with dark text. 80 px or more.
 - Text that matters is never below 26 px on the 1080 canvas. Labels 26 to 32 px, headline 80 px, end screen 130 to 210 px.
 - A strip at the very top with the ask, there from the first frame, so the static preview already carries it.
-- Words get underlined one by one, left to right, in a loop (`UL_CYCLE` frames, wipe out, start again). The keyword gets a curved underline. This keeps the eye moving along the ask.
+- Words get underlined one by one, left to right, once, at a slow pace (`STRIP_UL` frames), and the last underline finishes right as the screen changes. The keyword gets a bold curved arc in a contrasting colour (blue on yellow, `UL_RAW_COLOR`). This keeps the eye moving along the ask without repeating.
 
 ## Layout
 

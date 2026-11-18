@@ -45,7 +45,8 @@ scripts/check_gif_timing.py.
 ```text
 Add a comment ask inside the picture: a white strip at the very top, there from the first frame, reading
 COMMENT [RAW] FOR THE [NAME OF THE RESOURCE] with a bobbing down arrow. The words get underlined one by one from left to
-right, in a loop; the keyword gets a curved underline. After [12.4 s] the main content slides up and blurs out and an
+right, once, slowly, finishing on the last word exactly when the screen changes; the keyword gets a bold curved
+underline in a contrasting colour. After [12.4 s] the main content slides up and blurs out and an
 end screen builds in: COMMENT, the keyword on a big yellow bar, what they get, a bonus line, a down arrow. Keep the same
-underline loop on the end screen. Do not put the keyword in the post text.
+single underline pass on the end screen. Do not put the keyword in the post text.
 ```

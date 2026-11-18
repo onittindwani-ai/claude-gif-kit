@@ -4,7 +4,7 @@ The exact setup behind the animated explainer GIF from the post "Rate your last 
 
 - a **Remotion project** (`src/Pipeline.tsx`): footage tiles feed a square container where four agent logos take turns,
   one row of tool logos, a three track timeline, finished clips that fly out to four platforms, a comment strip with an
-  underline loop, and an end screen. 1080 by 1350, 60 fps, every frame a pure function of the frame number;
+  underline pass, and an end screen. 1080 by 1350, 60 fps, every frame a pure function of the frame number;
 - the **prompts** that built it, the **footage prompts**, the **design rules**, and the **GIF recipe** that fixes
   choppy GIFs (50 fps with every frame exactly 20 ms);
 - a **Claude Code skill** that turns a sketch into this kind of animation;
